@@ -38,29 +38,29 @@ fn main() {
 						               stream.send(OwnedMessage::Close(None)).map(|s| (None, s))
 						              })
 					      .and_then(|(msg, stream)| -> Box<Future<Item = _, Error = _>> {
-						               match msg {
-					                       Some(OwnedMessage::Text(txt)) => {
-						                       Box::new(stream.send(OwnedMessage::Text(txt))
-					                                 .map(|s| Loop::Continue(s)))
-					                       }
-					                       Some(OwnedMessage::Binary(bin)) => {
-						                       Box::new(stream.send(OwnedMessage::Binary(bin))
-					                                 .map(|s| Loop::Continue(s)))
-					                       }
-					                       Some(OwnedMessage::Ping(data)) => {
-						                          Box::new(stream.send(OwnedMessage::Pong(data))
-					                                    .map(|s| Loop::Continue(s)))
-					                       }
-					                       Some(OwnedMessage::Close(_)) => {
-						                          Box::new(stream.send(OwnedMessage::Close(None))
-					                                    .map(|_| Loop::Break(())))
-					                       }
-					                       Some(OwnedMessage::Pong(_)) => {
-						                          Box::new(future::ok(Loop::Continue(stream)))
-					                       }
-					                       None => Box::new(future::ok(Loop::Break(()))),
-					                   }
-						              })
+						match msg {
+							Some(OwnedMessage::Text(txt)) => {
+								Box::new(stream.send(OwnedMessage::Text(txt))
+								               .map(|s| Loop::Continue(s)))
+							}
+							Some(OwnedMessage::Binary(bin)) => {
+								Box::new(stream.send(OwnedMessage::Binary(bin))
+								               .map(|s| Loop::Continue(s)))
+							}
+							Some(OwnedMessage::Ping(data)) => {
+								Box::new(stream.send(OwnedMessage::Pong(data))
+								               .map(|s| Loop::Continue(s)))
+							}
+							Some(OwnedMessage::Close(_)) => {
+								Box::new(stream.send(OwnedMessage::Close(None))
+								               .map(|_| Loop::Break(())))
+							}
+							Some(OwnedMessage::Pong(_)) => {
+								Box::new(future::ok(Loop::Continue(stream)))
+							}
+							None => Box::new(future::ok(Loop::Break(()))),
+						}
+					})
 				})
 			})
 			.map(move |_| {

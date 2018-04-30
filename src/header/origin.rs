@@ -1,6 +1,6 @@
-use hyper::header::{Header, HeaderFormat};
-use hyper::header::parsing::from_one_raw_str;
 use hyper;
+use hyper::header::parsing::from_one_raw_str;
+use hyper::header::{Header, HeaderFormat};
 use std::fmt;
 use std::ops::Deref;
 
@@ -57,16 +57,16 @@ mod tests {
 	fn bench_header_origin_parse(b: &mut test::Bencher) {
 		let value = vec![b"foobar".to_vec()];
 		b.iter(|| {
-			       let mut origin: Origin = Header::parse_header(&value[..]).unwrap();
-			       test::black_box(&mut origin);
-			      });
+			let mut origin: Origin = Header::parse_header(&value[..]).unwrap();
+			test::black_box(&mut origin);
+		});
 	}
 	#[bench]
 	fn bench_header_origin_format(b: &mut test::Bencher) {
 		let value = vec![b"foobar".to_vec()];
 		let val: Origin = Header::parse_header(&value[..]).unwrap();
 		b.iter(|| {
-			       format!("{}", val);
-			      });
+			format!("{}", val);
+		});
 	}
 }

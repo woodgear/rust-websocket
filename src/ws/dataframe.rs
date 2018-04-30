@@ -2,11 +2,11 @@
 //! that all dataframes should share. This is so one can
 //! optimize the memory footprint of a dataframe for their
 //! own needs, and be able to use custom dataframes quickly
-use std::io::Write;
 use result::WebSocketResult;
+use std::io::Write;
 use ws::util::header as dfh;
-use ws::util::mask::Masker;
 use ws::util::mask;
+use ws::util::mask::Masker;
 
 /// A generic DataFrame. Every dataframe should be able to
 /// provide these methods. (If the payload is not known in advance then
@@ -77,7 +77,7 @@ pub trait DataFrame {
 			len: self.size() as u64,
 		};
 
-		let mut data= Vec::<u8>::new();
+		let mut data = Vec::<u8>::new();
 		dfh::write_header(&mut data, header)?;
 
 		match masking_key {
@@ -85,9 +85,7 @@ pub trait DataFrame {
 				let mut masker = Masker::new(mask, &mut data);
 				self.write_payload(&mut masker)?
 			}
-			None => {
-				self.write_payload(&mut data)?
-			},
+			None => self.write_payload(&mut data)?,
 		};
 		writer.write_all(data.as_slice())?;
 		Ok(())
